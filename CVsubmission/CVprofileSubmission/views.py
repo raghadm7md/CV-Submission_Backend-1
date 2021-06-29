@@ -27,5 +27,6 @@ def signup(request):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [email]
         send_mail( subject, message, email_from, recipient_list )
+
     return render (request)
 

@@ -8,6 +8,7 @@ django = "==3.0.8"
 djangorestframework = "*"
 
 [dev-packages]
+yapf = "*"
 
 [requires]
 python_version = "3.9"

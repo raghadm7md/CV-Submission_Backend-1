@@ -39,18 +39,24 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'CVprofileSubmission',
     'rest_framework',
-    'rest_framework.authtoken',
-    'corsheaders'
+    'knox',
+    # 'rest_framework.authtoken',
+    'corsheaders',
+    # 'rest_framework_jwt'
 ]
+
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-               'rest_framework.authentication.TokenAuthentication',
+            #    'rest_framework.authentication.TokenAuthentication',
+            #    'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+               'knox.auth.TokenAuthentication',
+
     ),
-    'DEFAULT_PERMISSION_CLASSES':(
-                'rest_framework.permissions.IsAuthenticated',
-    ),
+    # 'DEFAULT_PERMISSION_CLASSES':(
+    #             'rest_framework.permissions.IsAuthenticated',
+    # ),
 
 } 
 CORS_ALLOWED_ORIGINS = [    

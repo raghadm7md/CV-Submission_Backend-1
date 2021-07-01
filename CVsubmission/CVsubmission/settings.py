@@ -40,40 +40,27 @@ INSTALLED_APPS = [
     'CVprofileSubmission',
     'rest_framework',
     'knox',
-    # 'rest_framework.authtoken',
     'corsheaders',
-    # 'rest_framework_jwt'
 ]
 
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-            #    'rest_framework.authentication.TokenAuthentication',
-            #    'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
                'knox.auth.TokenAuthentication',
-
-    ),
-    # 'DEFAULT_PERMISSION_CLASSES':(
-    #             'rest_framework.permissions.IsAuthenticated',
-    # ),
-
+  )
 } 
-CORS_ALLOWED_ORIGINS = [    
-'http://localhost:3000'
-]
 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 
 ]
 
@@ -141,7 +128,18 @@ USE_L10N = True
 
 USE_TZ = True
 
+CORS_ALLOW_ALL_ORIGINS=True
 
+CORS_SUPPORTS_CREDENTIALS=True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 

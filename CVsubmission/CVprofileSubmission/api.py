@@ -1,9 +1,9 @@
 from rest_framework.response import Response
 from rest_framework import viewsets , permissions , generics
-from .models import User , submission , UserDetials ,Education ,Attachment
+from django.contrib.auth.models import User
+from .models import  submission , UserDetials ,Education ,Attachment
 from .serializers import RegisterSerializer ,LoginSerializer, UserSerializer , submissionSerializer , UserDetialsSerializer ,EducationSerializer ,AttachmentSerializer
 from knox.models import AuthToken
-
 
 
 
@@ -13,6 +13,12 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     def get_object(self):
      return self.request.user
+
+class UserAPI(generics.RetrieveAPIView):
+  permission_classes = [permissions.IsAuthenticated]
+  serializer_class = UserSerializer
+  def get_object(self):
+    return self.request.user
 
 
 class RegisterAPI(generics.GenericAPIView):
@@ -50,6 +56,7 @@ class UserDetialsViewSet(viewsets.ModelViewSet):
     permissions_class =[permissions.IsAuthenticated] 
     serializer_class = UserDetialsSerializer
 
+
 class EducationViewSet(viewsets.ModelViewSet):
     queryset = Education.objects.all()
     permissions_class =[permissions.IsAuthenticated] 
@@ -59,3 +66,4 @@ class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     permissions_class =[permissions.IsAuthenticated] 
     serializer_class = AttachmentSerializer
+    

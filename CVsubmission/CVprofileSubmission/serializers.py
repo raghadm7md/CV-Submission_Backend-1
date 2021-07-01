@@ -56,3 +56,4 @@ class AttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attachment
         fields = '__all__'
+

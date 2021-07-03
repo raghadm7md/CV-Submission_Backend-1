@@ -1,10 +1,12 @@
 from rest_framework.response import Response
-from rest_framework import viewsets , permissions , generics
+from rest_framework import viewsets , permissions , generics, authentication
 from django.contrib.auth.models import User
 from .models import  submission , UserDetials ,Education ,Attachment
 from .serializers import RegisterSerializer ,LoginSerializer, UserSerializer , submissionSerializer , UserDetialsSerializer ,EducationSerializer ,AttachmentSerializer
-from knox.models import AuthToken
+# from knox.models import AuthToken
 
+from rest_framework.authtoken.models import Token
+from django.shortcuts import get_list_or_404, get_object_or_404
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -16,9 +18,14 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class UserAPI(generics.RetrieveAPIView):
   permission_classes = [permissions.IsAuthenticated]
+  authentication_classes = (authentication.TokenAuthentication,)
   serializer_class = UserSerializer
-  def get_object(self):
-    return self.request.user
+
+
+  def get(self,request):
+      return Response({
+          "user":UserSerializer(request.user).data,
+      })
 
 
 class RegisterAPI(generics.GenericAPIView):
@@ -30,7 +37,7 @@ class RegisterAPI(generics.GenericAPIView):
     user = serializer.save()
     return Response({
       "user": UserSerializer(user, context=self.get_serializer_context()).data,
-      "token": AuthToken.objects.create(user)[1]
+      "token": Token.objects.create(user)[1]
     })
 
 class LoginAPI(generics.GenericAPIView):
@@ -40,7 +47,7 @@ class LoginAPI(generics.GenericAPIView):
     serializer = self.get_serializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = serializer.validated_data
-    token = AuthToken.objects.create(user)[1]
+    token = Token.objects.create(user)[1]
     return Response({
       "user": UserSerializer(user, context=self.get_serializer_context()).data,
       "token": token
@@ -50,6 +57,32 @@ class submissionViewSet(viewsets.ModelViewSet):
     queryset = submission.objects.all()
     permissions_class =[permissions.IsAuthenticated] 
     serializer_class = submissionSerializer
+
+    def list(self, request):
+        queryset = submission.objects.filter(user_Id=request.user.id)
+        serializer = submissionSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request):
+        queryset = submission.objects.create(user_Id=request.user)
+        serializer = submissionSerializer(queryset)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = submission.objects.filter(user_Id=request.user.id)
+        object = get_object_or_404(queryset, pk=pk)
+        serializer = submissionSerializer(object)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        queryset = submission.objects.filter(user_Id=request.user.id)
+        object = get_object_or_404(queryset, pk=pk)
+        # This is ust an example for an update
+        # Link submission to another user
+        object.user_Id = User.objects.get(id=request.data['id'])
+        object.save()
+        serializer = submissionSerializer(object)
+        return Response(serializer.data)
 
 class UserDetialsViewSet(viewsets.ModelViewSet):
     queryset = UserDetials.objects.all()

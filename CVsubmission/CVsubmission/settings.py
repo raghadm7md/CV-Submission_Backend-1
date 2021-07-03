@@ -39,18 +39,22 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'CVprofileSubmission',
     'rest_framework',
+    'rest_framework.authtoken',
     'knox',
     'corsheaders',
 ]
 
-
-
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#                'knox.auth.TokenAuthentication',
+#   )
+# } 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-               'knox.auth.TokenAuthentication',
-  )
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
 } 
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

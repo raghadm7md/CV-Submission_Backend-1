@@ -40,15 +40,10 @@ INSTALLED_APPS = [
     'CVprofileSubmission',
     'rest_framework',
     'rest_framework.authtoken',
-    'knox',
     'corsheaders',
 ]
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#                'knox.auth.TokenAuthentication',
-#   )
-# } 
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',

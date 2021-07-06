@@ -32,6 +32,7 @@ class RegisterAPI(generics.GenericAPIView):
   serializer_class = RegisterSerializer
 
   def post(self, request, *args, **kwargs):
+    print("hi from post !!!!!!!!!!!!!!")
     serializer = self.get_serializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = serializer.save()
@@ -84,10 +85,30 @@ class submissionViewSet(viewsets.ModelViewSet):
         serializer = submissionSerializer(object)
         return Response(serializer.data)
 
+
 class UserDetialsViewSet(viewsets.ModelViewSet):
     queryset = UserDetials.objects.all()
     permissions_class =[permissions.IsAuthenticated] 
     serializer_class = UserDetialsSerializer
+
+    def list(self, request):
+        queryset = UserDetials.objects.filter(submission_id__user_Id=request.user.id)
+        serializer = UserDetialsSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def get(self, request, pk=None):
+        queryset = UserDetials.objects.filter(submission_id__user_Id=request.user.id)
+        object = get_object_or_404(queryset, pk=pk)
+        serializer = UserDetialsSerializer(object)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        queryset = UserDetials.objects.filter(submission_id__user_Id=request.user.id)
+        object = get_object_or_404(queryset, pk=pk)
+        object.submission_id = User.objects.get(id=request.data['id'])
+        object.save()
+        serializer = UserDetialsSerializer(object)
+        return Response(serializer.data)
 
 
 class EducationViewSet(viewsets.ModelViewSet):
@@ -95,8 +116,49 @@ class EducationViewSet(viewsets.ModelViewSet):
     permissions_class =[permissions.IsAuthenticated] 
     serializer_class = EducationSerializer
 
+    def list(self, request):
+        queryset = Education.objects.filter(submission_id__user_Id=request.user.id)
+        serializer = EducationSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Education.objects.filter(submission_id__user_Id=request.user.id)
+        object = get_object_or_404(queryset, pk=pk)
+        serializer = EducationSerializer(object)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        queryset = Education.objects.filter(submission_id__user_Id=request.user.id)
+        object = get_object_or_404(queryset, pk=pk)
+
+        object.submission_id = submission.objects.get(id=request.data['user_Id'])
+        object.save()
+        serializer = EducationSerializer(object)
+        return Response(serializer.data)
+
+
 class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     permissions_class =[permissions.IsAuthenticated] 
     serializer_class = AttachmentSerializer
+
+    def list(self, request):
+        queryset = Attachment.objects.filter(submission_id__user_Id=request.user.id)
+        serializer = AttachmentSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Attachment.objects.filter(submission_id__user_Id=request.user.id)
+        object = get_object_or_404(queryset, pk=pk)
+        serializer = AttachmentSerializer(object)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        queryset = Attachment.objects.filter(submission_id__user_Id=request.user.id)
+        object = get_object_or_404(queryset, pk=pk)
+        object.submission_id = submission.objects.get(id=request.data['user_Id'])
+        object.save()
+        serializer = AttachmentSerializer(object)
+        return Response(serializer.data)
     
+

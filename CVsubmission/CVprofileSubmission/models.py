@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 
 class submission (models.Model):
-    user_Id=models.ForeignKey(User, related_name="CVprofileSubmission", on_delete=models.CASCADE, null=True)
+    user_Id=models.ForeignKey(User, related_name="CVprofileSubmission", on_delete=models.CASCADE, null=True , unique=False)
 
 
 martialstatuslist=(

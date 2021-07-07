@@ -1,6 +1,6 @@
 from rest_framework import routers
 from .api import  submissionViewSet, UserDetialsViewSet, EducationViewSet, AttachmentViewSet
-from .api import RegisterAPI , UserAPI
+from .api import RegisterAPI , UserAPI ,LogoutView
 from rest_framework.authtoken.views import obtain_auth_token
 from django.urls import path 
 
@@ -15,6 +15,8 @@ urlpatterns = [
     path('api-token-auth/register', RegisterAPI.as_view()),
     path('api-token-auth/auth', obtain_auth_token),
     path('api-token-auth/user', UserAPI.as_view()),
+    path('api-token-auth/logout', LogoutView.as_view()),
+
 ]
 
 urlpatterns += router.urls

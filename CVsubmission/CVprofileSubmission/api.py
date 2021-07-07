@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework import viewsets , permissions , generics, authentication
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
+from rest_framework import status
 from .models import  submission , UserDetials ,Education ,Attachment
 from .serializers import RegisterSerializer ,LoginSerializer, UserSerializer , submissionSerializer , UserDetialsSerializer ,EducationSerializer ,AttachmentSerializer
 # from knox.models import AuthToken
@@ -32,7 +34,6 @@ class RegisterAPI(generics.GenericAPIView):
   serializer_class = RegisterSerializer
 
   def post(self, request, *args, **kwargs):
-    print("hi from post !!!!!!!!!!!!!!")
     serializer = self.get_serializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = serializer.save()
@@ -42,17 +43,25 @@ class RegisterAPI(generics.GenericAPIView):
     })
 
 class LoginAPI(generics.GenericAPIView):
-  serializer_class = LoginSerializer
 
-  def post(self, request):
-    serializer = self.get_serializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    user = serializer.validated_data
-    token = Token.objects.create(user)[1]
-    return Response({
-      "user": UserSerializer(user, context=self.get_serializer_context()).data,
-      "token": token
-    })
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+      serializer = self.get_serializer(data=request.data)
+      serializer.is_valid(raise_exception=True)
+      user = serializer.validated_data
+      token = Token.objects.create(user)[1]
+      return Response({
+        "user": UserSerializer(user, context=self.get_serializer_context()).data,
+        "token": token
+      })
+      
+class LogoutView(generics.GenericAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def post(self, request):
+      logout(request)
+      data = {'success': 'Sucessfully logged out'}
+      return Response(data=data, status=status.HTTP_200_OK)
 
 class submissionViewSet(viewsets.ModelViewSet):
     queryset = submission.objects.all()
@@ -105,7 +114,7 @@ class UserDetialsViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         queryset = UserDetials.objects.filter(submission_id__user_Id=request.user.id)
         object = get_object_or_404(queryset, pk=pk)
-        object.submission_id = User.objects.get(id=request.data['id'])
+        object.submission_id__user_Id = User.objects.get(id=request.data['id'])
         object.save()
         serializer = UserDetialsSerializer(object)
         return Response(serializer.data)
@@ -130,12 +139,10 @@ class EducationViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         queryset = Education.objects.filter(submission_id__user_Id=request.user.id)
         object = get_object_or_404(queryset, pk=pk)
-
-        object.submission_id = submission.objects.get(id=request.data['user_Id'])
+        object.submission_id__user_Id = submission.objects.get(id=request.data['id'])
         object.save()
         serializer = EducationSerializer(object)
         return Response(serializer.data)
-
 
 class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
@@ -156,9 +163,8 @@ class AttachmentViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None):
         queryset = Attachment.objects.filter(submission_id__user_Id=request.user.id)
         object = get_object_or_404(queryset, pk=pk)
-        object.submission_id = submission.objects.get(id=request.data['user_Id'])
+        object.submission_id__user_Id = submission.objects.get(id=request.data['id'])
         object.save()
         serializer = AttachmentSerializer(object)
         return Response(serializer.data)
     
-

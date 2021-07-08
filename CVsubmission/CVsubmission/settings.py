@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 from dotenv import load_dotenv
 
 import os
+import django_heroku
+
 
 load_dotenv()
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -145,6 +147,7 @@ CORS_ALLOW_METHODS = [
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+django_heroku.settings(locals())
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
